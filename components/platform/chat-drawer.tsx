@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, ChevronUp, Send } from "lucide-react"
+import { ChevronUp, ChevronDown, Send } from "lucide-react"
 
 interface Message {
   id: string
@@ -66,7 +66,7 @@ export function ChatDrawer() {
   }
 
   return (
-    <div className="fixed bottom-0 left-64 right-0 z-10 bg-background border-t border-border/40">
+    <div className="w-full bg-background border-t border-border/40">
       <div className="flex justify-between items-center px-4 py-2 border-b border-border/40">
         <h3 className="font-medium">AI Assistant</h3>
         <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
@@ -89,7 +89,7 @@ export function ChatDrawer() {
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-3/4 rounded-lg px-4 py-2 ${
+                className={`max-w-[90%] rounded-lg px-4 py-2 ${
                   message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                 }`}
               >
@@ -106,7 +106,7 @@ export function ChatDrawer() {
         </div>
       )}
 
-      <div className="p-4">
+      <div className="p-4 flex-1">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
             value={input}

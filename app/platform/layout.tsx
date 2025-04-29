@@ -4,7 +4,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 import { PlatformSidebar } from "@/components/platform/sidebar"
 import { ChatDrawer } from "@/components/platform/chat-drawer"
-import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default async function PlatformLayout({
   children,
@@ -21,13 +20,13 @@ export default async function PlatformLayout({
     redirect("/login")
   }
 
-  return (
-    <SidebarProvider>
-      <div className="flex h-screen overflow-hidden">
-        <PlatformSidebar />
-        <div className="flex-1 overflow-auto">{children}</div>
+  return ( // Yikes, you probably shouldn't manually set the height like this \_O_/
+    <div className="flex overflow-hidden" style={{ height: 'calc(100vh - 64px)' }}>
+      <PlatformSidebar />
+      <div className="relative flex-1 flex flex-col">
+        <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
         <ChatDrawer />
       </div>
-    </SidebarProvider>
+    </div>
   )
 }

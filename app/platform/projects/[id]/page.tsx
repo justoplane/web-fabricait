@@ -36,7 +36,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-full flex-col">
       <header className="border-b border-border/40 bg-background p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -60,8 +60,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         </div>
       </header>
-      <main className="flex-1 overflow-hidden p-4">
-        <div className="h-full rounded-lg border border-border/40 bg-muted/20 shadow-sm">
+      <main className="flex-1 overflow-hidden">
+        <div className="h-full">
           <CADViewer projectId={params.id} />
         </div>
       </main>
