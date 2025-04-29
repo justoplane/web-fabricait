@@ -4,104 +4,99 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ZoomIn, ZoomOut, RotateCcw, Download, CuboidIcon as Cube } from "lucide-react"
 import { createClientSupabaseClient } from "@/lib/supabase"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { OrbitControls } from "@react-three/drei"
+import * as THREE from "three"
+import { STLLoader } from "three/addons/loaders/STLLoader.js"
 
 interface CADViewerProps {
   projectId?: string
 }
 
-export function CADViewer({ projectId }: CADViewerProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [projectData, setProjectData] = useState<any>(null)
+async function fetchSTLFile(projectId: string): Promise<string> {
+  try {
+    const response = await fetch(`/api/stl/${projectId}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch STL file')
+    }
+    const blob = await response.blob()
+    return URL.createObjectURL(blob)
+  } catch (error) {
+    console.error('Error fetching STL:', error)
+    throw error
+  }
+}
+
+function Model({ url }: { url: string }) {
+  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
+  const meshRef = useRef<THREE.Mesh>(null)
 
   useEffect(() => {
-    const loadProjectData = async () => {
-      if (projectId) {
-        setIsLoading(true)
-        const supabase = createClientSupabaseClient()
+    const loader = new STLLoader()
+    loader.load(url, (geometry: THREE.BufferGeometry) => {
+      geometry.center()
+      geometry.computeVertexNormals()
+      setGeometry(geometry)
+    })
 
-        try {
-          const { data, error } = await supabase.from("projects").select("*").eq("id", projectId).single()
+    // Cleanup the blob URL when component unmounts
+    return () => {
+      URL.revokeObjectURL(url)
+    }
+  }, [url])
 
-          if (error) {
-            console.error("Error loading project:", error)
-          } else {
-            setProjectData(data)
-          }
-        } catch (error) {
-          console.error("Failed to load project data:", error)
-        }
-      }
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.005
+    }
+  })
 
-      // Simulate loading a CAD model
-      setTimeout(() => {
+  if (!geometry) return null
+
+  return (
+    <mesh ref={meshRef} geometry={geometry}>
+      <meshStandardMaterial color="#3B82F6" />
+    </mesh>
+  )
+}
+
+function Scene({ stlUrl }: { stlUrl: string }) {
+  return (
+    <>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={1} />
+      <Model url={stlUrl} />
+      <OrbitControls />
+    </>
+  )
+}
+
+export function CADViewer({ projectId }: CADViewerProps) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [stlUrl, setStlUrl] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadModel = async () => {
+      if (!projectId) {
         setIsLoading(false)
-        renderCADModel()
-      }, 1500)
-    }
+        return
+      }
 
-    loadProjectData()
-  }, [projectId])
-
-  const renderCADModel = () => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d")
-      if (ctx) {
-        // Draw a simple 3D cube as a placeholder
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-
-        // Set the center of the canvas
-        const centerX = canvasRef.current.width / 2
-        const centerY = canvasRef.current.height / 2
-
-        // Draw a simple gear shape
-        ctx.strokeStyle = "#3B82F6"
-        ctx.lineWidth = 2
-
-        const outerRadius = 100
-        const innerRadius = 70
-        const teethCount = 12
-
-        ctx.beginPath()
-
-        // Draw the outer gear teeth
-        for (let i = 0; i < teethCount; i++) {
-          const angle1 = (i / teethCount) * Math.PI * 2
-          const angle2 = ((i + 0.5) / teethCount) * Math.PI * 2
-          const angle3 = ((i + 1) / teethCount) * Math.PI * 2
-
-          const outerX1 = centerX + Math.cos(angle1) * outerRadius
-          const outerY1 = centerY + Math.sin(angle1) * outerRadius
-
-          const toothX = centerX + Math.cos(angle2) * (outerRadius + 20)
-          const toothY = centerY + Math.sin(angle2) * (outerRadius + 20)
-
-          const outerX2 = centerX + Math.cos(angle3) * outerRadius
-          const outerY2 = centerY + Math.sin(angle3) * outerRadius
-
-          if (i === 0) {
-            ctx.moveTo(outerX1, outerY1)
-          }
-
-          ctx.lineTo(toothX, toothY)
-          ctx.lineTo(outerX2, outerY2)
-        }
-
-        ctx.closePath()
-        ctx.stroke()
-
-        // Draw the inner circle
-        ctx.beginPath()
-        ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2)
-        ctx.stroke()
-
-        // Draw the center hole
-        ctx.beginPath()
-        ctx.arc(centerX, centerY, 20, 0, Math.PI * 2)
-        ctx.stroke()
+      try {
+        setIsLoading(true)
+        const url = await fetchSTLFile(projectId)
+        setStlUrl(url)
+      } catch (err) {
+        setError('Failed to load model')
+        console.error(err)
+      } finally {
+        setIsLoading(false)
       }
     }
-  }
+
+    loadModel()
+  }, [projectId])
 
   return (
     <div className="relative h-full w-full flex flex-col">
@@ -127,9 +122,15 @@ export function CADViewer({ projectId }: CADViewerProps) {
             <p className="mt-4 text-lg">Loading CAD model...</p>
           </div>
         </div>
-      ) : (
-        <canvas ref={canvasRef} className="h-full w-full" width={800} height={600} />
-      )}
+      ) : error ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <p className="text-lg text-red-500">{error}</p>
+        </div>
+      ) : stlUrl ? (
+        <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+          <Scene stlUrl={stlUrl} />
+        </Canvas>
+      ) : null}
     </div>
   )
 }

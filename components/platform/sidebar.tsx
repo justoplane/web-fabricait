@@ -14,6 +14,9 @@ export function PlatformSidebar() {
   const supabase = createClientSupabaseClient()
 
   const isActive = (path: string) => {
+    if (path === "/platform" && pathname !== "/platform") {
+      return false
+    }
     return pathname === path || pathname.startsWith(`${path}/`)
   }
 
