@@ -30,25 +30,25 @@ export default function ProductPage() {
                   title: "Natural Language to CAD",
                   description:
                     "Describe your design in plain English, and watch as our AI generates a precise 3D model in seconds.",
-                  image: "/placeholder.svg?height=400&width=600",
+                  image: "/images/cad-model.png",
                 },
                 {
                   title: "Real-time Editing",
                   description:
                     "Refine your design through conversation. Ask the AI to adjust dimensions, add features, or modify components.",
-                  image: "/placeholder.svg?height=400&width=600",
+                  image: "/images/realtime.png",
                 },
                 {
                   title: "Multi-format Export",
                   description:
                     "Export your designs in industry-standard formats including STL, STEP, OBJ, and more for 3D printing or further editing.",
-                  image: "/placeholder.svg?height=400&width=600",
+                  image: "/images/formats.png",
                 },
                 {
                   title: "Collaboration Tools",
                   description:
                     "Share designs with team members, collaborate in real-time, and maintain version history of all your projects.",
-                  image: "/placeholder.svg?height=400&width=600",
+                  image: "/images/collaboration.jpg",
                 },
               ].map((feature, index) => (
                 <div key={index} className="grid gap-8 md:grid-cols-2">

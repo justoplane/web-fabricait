@@ -92,7 +92,7 @@ export default function Home() {
             <div className="aspect-video bg-muted">
               <div className="flex h-full items-center justify-center">
                 <Image
-                  src="/images/fabricait-team.png"
+                  src="/images/fusion360-design.gif"
                   alt="Fabricait Demo"
                   width={1280}
                   height={720}
