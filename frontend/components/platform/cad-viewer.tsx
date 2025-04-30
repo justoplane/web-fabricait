@@ -15,10 +15,24 @@ interface CADViewerProps {
 
 async function fetchSTLFile(projectId: string): Promise<string> {
   try {
-    const response = await fetch(`/api/stl/${projectId}`)
+    const supabase = createClientSupabaseClient()
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session) {
+      throw new Error('No active session')
+    }
+
+    const response = await fetch(`/api/stl/${projectId}`, {
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Accept': 'application/sla',
+      },
+    })
+
     if (!response.ok) {
       throw new Error('Failed to fetch STL file')
     }
+
     const blob = await response.blob()
     return URL.createObjectURL(blob)
   } catch (error) {

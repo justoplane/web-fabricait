@@ -19,11 +19,11 @@ export default async function PlatformLayout({
     redirect("/login")
   }
 
-  return ( // Yikes, you probably shouldn't manually set the height like this \_O_/
-    <div className="flex overflow-hidden" style={{ height: 'calc(100vh - 70px)' }}>
+  return (
+    <div className="flex h-[calc(100vh-4rem)]">
       <PlatformSidebar />
-      <div className="relative flex-1 flex flex-col">
-        <div className="flex-1 overflow-hidden">{children}</div>
+      <div className="relative flex-1 flex flex-col min-w-0">
+        <div className="flex-1 overflow-auto">{children}</div>
       </div>
     </div>
   )

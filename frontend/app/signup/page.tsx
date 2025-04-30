@@ -1,8 +1,21 @@
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { AuthForm } from "@/components/auth/auth-form"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const supabase = createServerComponentClient({ cookies })
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (session) {
+    redirect("/platform")
+  }
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12">
       <Card className="w-full max-w-md">

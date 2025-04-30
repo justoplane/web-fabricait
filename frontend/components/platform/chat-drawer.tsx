@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronUp, ChevronDown, Send } from "lucide-react"
@@ -39,6 +39,20 @@ export function ChatDrawer() {
     },
   ])
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom()
+    }
+  }, [messages, isOpen])
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim()) return
@@ -52,6 +66,7 @@ export function ChatDrawer() {
 
     setMessages([...messages, newMessage])
     setInput("")
+    setIsOpen(true)
 
     // Simulate AI response
     setTimeout(() => {
@@ -67,9 +82,12 @@ export function ChatDrawer() {
 
   return (
     <div className="w-full bg-background border-t border-border/40">
-      <div className="flex justify-between items-center px-4 py-2 border-b border-border/40">
+      <div 
+        className="flex justify-between items-center px-4 py-2 border-b border-border/40 cursor-pointer hover:bg-muted/50 transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <h3 className="font-medium">AI Assistant</h3>
-        <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex items-center">
           {isOpen ? (
             <>
               <ChevronDown className="h-4 w-4 mr-2" />
@@ -81,11 +99,11 @@ export function ChatDrawer() {
               Show History
             </>
           )}
-        </Button>
+        </div>
       </div>
 
       {isOpen && (
-        <div className="p-4 max-h-80 overflow-y-auto space-y-4">
+        <div ref={messagesContainerRef} className="p-4 max-h-80 overflow-y-auto space-y-4">
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
               <div

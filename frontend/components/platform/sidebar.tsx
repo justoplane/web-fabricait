@@ -36,37 +36,10 @@ export function PlatformSidebar() {
       <nav className="flex-1 overflow-auto p-4">
         <ul className="space-y-2">
           <li>
-            <Link href="/platform">
-              <Button variant={isActive("/platform") ? "secondary" : "ghost"} className="w-full justify-start">
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-          </li>
-          <li>
             <Link href="/platform/projects">
               <Button variant={isActive("/platform/projects") ? "secondary" : "ghost"} className="w-full justify-start">
                 <FolderKanban className="mr-2 h-4 w-4" />
                 Projects
-              </Button>
-            </Link>
-          </li>
-          <li>
-            <Link href="/platform/documents">
-              <Button
-                variant={isActive("/platform/documents") ? "secondary" : "ghost"}
-                className="w-full justify-start"
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Documents
-              </Button>
-            </Link>
-          </li>
-          <li>
-            <Link href="/platform/users">
-              <Button variant={isActive("/platform/users") ? "secondary" : "ghost"} className="w-full justify-start">
-                <Users className="mr-2 h-4 w-4" />
-                Users
               </Button>
             </Link>
           </li>

@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
 
 // Replace this with your actual backend URL
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001'
@@ -10,30 +8,30 @@ export async function GET(
   { params }: { params: { projectId: string } }
 ) {
   try {
-    // Create Supabase client
-    const supabase = createRouteHandlerClient({ cookies })
+    // Await the params to ensure they're properly resolved
+    const { projectId } = await Promise.resolve(params)
+    const authHeader = request.headers.get('authorization')
 
-    // Check if user is authenticated
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-
-    if (authError || !session) {
+    if (!authHeader) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Authorization header required' },
         { status: 401 }
       )
     }
 
-    const { projectId } = params
-
-    // Make request to your backend with the user's session token
+    // Forward the request to the backend
     const response = await fetch(`${BACKEND_URL}/api/stl/${projectId}`, {
       headers: {
+        'Authorization': authHeader,
         'Accept': 'application/sla',
-        'Authorization': `Bearer ${session.access_token}`,
       },
     })
 
+    console.log('Backend Response Status:', response.status) // Debug log
+
     if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Backend Error:', errorText) // Debug log
       throw new Error(`Backend responded with status: ${response.status}`)
     }
 

@@ -85,14 +85,14 @@ export default function Home() {
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">See Fabricait in Action</h2>
             <p className="mb-12 text-lg text-muted-foreground">
-              Watch how easy it is to create complex CAD models with just text
+              Watch how easy it is to create complex CAD models with natural text input
             </p>
           </div>
           <div className="mx-auto max-w-4xl overflow-hidden rounded-lg border border-border/40 bg-card shadow-lg">
             <div className="aspect-video bg-muted">
               <div className="flex h-full items-center justify-center">
                 <Image
-                  src="/placeholder.svg?height=720&width=1280"
+                  src="/images/fabricait-team.png"
                   alt="Fabricait Demo"
                   width={1280}
                   height={720}

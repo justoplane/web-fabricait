@@ -31,22 +31,22 @@ export default function AboutPage() {
                   without specialized training.
                 </p>
                 <p className="mb-4 text-lg">
-                  Our founders, a team of engineers and AI researchers, set out to bridge this gap by creating an
+                  Our founders, a team of engineers and university students, set out to bridge this gap by creating an
                   intuitive platform that could translate natural language into precise CAD models.
                 </p>
                 <p className="text-lg">
-                  Since our launch in 2023, we've been helping engineers, designers, and creators of all skill levels
+                  Since our launch in early 2025, we've been helping engineers, designers, and creators of all skill levels
                   bring their ideas to life faster than ever before.
                 </p>
               </div>
               <div className="rounded-lg border border-border/40 bg-card overflow-hidden">
                 <Image
-                  src="/placeholder.svg?height=400&width=600"
+                  src="/images/fabricait-team.jpeg"
                   alt="Fabricait Team"
                   width={600}
                   height={400}
                   className="h-full w-full object-cover"
-                />
+                /> 
               </div>
             </div>
           </div>
@@ -61,22 +61,22 @@ export default function AboutPage() {
             <div className="grid gap-8 md:grid-cols-3">
               {[
                 {
-                  name: "Alex Morgan",
+                  name: "Justin Plane", 
                   role: "CEO & Co-Founder",
-                  bio: "Former mechanical engineer with 10+ years of experience in CAD design and product development.",
-                  image: "/placeholder.svg?height=300&width=300",
+                  bio: "Computer Science student at Utah State University",
+                  image: "/images/justin.jpg",
                 },
                 {
-                  name: "Priya Sharma",
+                  name: "Andrew Tolton",
                   role: "CTO & Co-Founder",
-                  bio: "AI researcher with a PhD in machine learning and computer vision from Stanford University.",
-                  image: "/placeholder.svg?height=300&width=300",
+                  bio: "PhD student in Computer Science and Mechanical Engineering at UCLA",
+                  image: "/images/andrew.jpg",
                 },
                 {
-                  name: "David Chen",
-                  role: "Head of Engineering",
-                  bio: "Full-stack developer with expertise in 3D rendering and computational geometry.",
-                  image: "/placeholder.svg?height=300&width=300",
+                  name: "Allan Torres",
+                  role: "Data Scientist & Co-Founder",
+                  bio: "Specialist in data science and machine learning",
+                  image: "/images/allan.jpg",
                 },
               ].map((member, index) => (
                 <div

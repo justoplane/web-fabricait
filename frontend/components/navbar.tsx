@@ -1,12 +1,37 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/logo"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useEffect, useState } from "react"
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setIsAuthenticated(!!session)
+    }
+
+    checkSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.refresh()
+  }
 
   const isActive = (path: string) => {
     return pathname === path
@@ -48,14 +73,22 @@ export function Navbar() {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
+            {isAuthenticated ? (
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                Sign out
               </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm">Sign up</Button>
-            </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm">Sign up</Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>

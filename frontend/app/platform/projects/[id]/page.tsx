@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { CADViewer } from "@/components/platform/cad-viewer"
 import Link from "next/link"
 import { ArrowLeft, Download, Share2 } from "lucide-react"
+import { ChatDrawer } from "@/components/platform/chat-drawer"
 
 interface ProjectPageProps {
   params: {
@@ -13,6 +14,9 @@ interface ProjectPageProps {
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
+  // Handle params asynchronously
+  const projectId = await Promise.resolve(params.id)
+  
   const supabase = createServerComponentClient({ cookies })
 
   const {
@@ -23,7 +27,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     redirect("/login")
   }
 
-  const { data: project } = await supabase.from("projects").select("*").eq("id", params.id).single()
+  const { data: project } = await supabase.from("projects").select("*").eq("id", projectId).single()
 
   if (!project) {
     notFound()
@@ -62,7 +66,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </header>
       <main className="flex-1 overflow-hidden">
         <div className="h-full">
-          <CADViewer projectId={params.id} />
+          <CADViewer projectId={projectId} />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <ChatDrawer />
         </div>
       </main>
     </div>
